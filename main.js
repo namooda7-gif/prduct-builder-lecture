@@ -48,7 +48,7 @@ class LottoBall extends HTMLElement {
 
 customElements.define('lotto-ball', LottoBall);
 
-
+// --- Lotto Generation --- 
 const generateBtn = document.getElementById('generate-btn');
 const lottoNumbersContainer = document.getElementById('lotto-numbers');
 
@@ -66,10 +66,58 @@ generateBtn.addEventListener('click', () => {
   sortedNumbers.forEach((number, index) => {
     const ball = document.createElement('lotto-ball');
     ball.setAttribute('number', number);
-    // Apply animation from style.css
     ball.style.animation = `appear 0.5s ease-out forwards`;
     ball.style.animationDelay = `${index * 0.15}s`;
 
     lottoNumbersContainer.appendChild(ball);
   });
+});
+
+// --- Theme Switch --- 
+const themeToggle = document.getElementById('theme-toggle');
+const docElement = document.documentElement; // <html> element
+
+// Function to set the theme
+const setTheme = (theme) => {
+  docElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+};
+
+// Check for saved theme in localStorage
+const savedTheme = localStorage.getItem('theme');
+
+// Check for system preference
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+if (savedTheme) {
+    docElement.setAttribute('data-theme', savedTheme);
+    themeToggle.checked = savedTheme === 'dark';
+} else if (prefersDark.matches) {
+    setTheme('dark');
+    themeToggle.checked = true;
+} else {
+    setTheme('light');
+}
+
+// Listener for the toggle
+themeToggle.addEventListener('change', () => {
+    if (themeToggle.checked) {
+        setTheme('dark');
+    } else {
+        setTheme('light');
+    }
+});
+
+// Listener for system preference changes
+prefersDark.addEventListener('change', (e) => {
+    // Only change if there's no manually saved theme
+    if (!localStorage.getItem('theme')) {
+        if (e.matches) {
+            setTheme('dark');
+            themeToggle.checked = true;
+        } else {
+            setTheme('light');
+            themeToggle.checked = false;
+        }
+    }
 });

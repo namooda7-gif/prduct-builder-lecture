@@ -2,14 +2,17 @@
 @layer base, components, utilities;
 
 @layer base {
+  /* Default to light theme */
   :root {
     --brand-hue: 280;
     --bg-hue: 270;
 
-    --bg-color: oklch(20% 0.05 var(--bg-hue));
-    --text-color: oklch(95% 0.05 var(--bg-hue));
+    /* Light Theme Palette */
+    --bg-color: oklch(98% 0.01 var(--bg-hue));
+    --text-color: oklch(20% 0.05 var(--bg-hue));
     --accent-color: oklch(75% 0.25 var(--brand-hue));
     --accent-color-dark: oklch(65% 0.25 var(--brand-hue));
+    --shadow-color: oklch(from var(--accent-color) l c h / 0.4);
 
     --font-family: 'Inter', sans-serif;
     --font-size-base: 16px;
@@ -21,6 +24,23 @@
     --spacing-md: 1.5rem;
     --spacing-lg: 2rem;
   }
+
+  /* Dark Theme Palette */
+  [data-theme='dark'] {
+    --bg-color: oklch(20% 0.05 var(--bg-hue));
+    --text-color: oklch(95% 0.05 var(--bg-hue));
+    --shadow-color: oklch(from var(--accent-color) l c h / 0.5);
+  }
+
+  /* Auto-detect dark mode */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+        --bg-color: oklch(20% 0.05 var(--bg-hue));
+        --text-color: oklch(95% 0.05 var(--bg-hue));
+        --shadow-color: oklch(from var(--accent-color) l c h / 0.5);
+    }
+  }
+
 
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap');
 
@@ -34,14 +54,15 @@
     place-content: center;
     min-height: 100vh;
     text-align: center;
-    background-image: radial-gradient(circle, oklch(25% 0.05 var(--bg-hue)) 1px, transparent 1px);
+    background-image: radial-gradient(circle, oklch(from var(--text-color) l c h / 0.1) 1px, transparent 1px);
     background-size: 10px 10px;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1 {
     font-size: var(--font-size-xl);
     color: var(--accent-color);
-    text-shadow: 0 0 10px var(--accent-color), 0 0 20px oklch(80% 0.3 var(--brand-hue) / 0.5);
+    text-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--shadow-color);
     margin-block-end: var(--spacing-xs);
   }
 
@@ -53,12 +74,18 @@
 }
 
 @layer components {
+  header {
+    position: relative;
+    width: 100%;
+  }
+
   .container {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--spacing-lg);
     max-width: 600px;
+    width: 100%;
     margin-inline: auto;
   }
 
@@ -83,23 +110,75 @@
     position: relative;
     overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 15px oklch(from var(--accent-color) l c h / 0.4),
+    box-shadow: 0 4px 15px var(--shadow-color),
                 0 1px 2px inset oklch(from var(--accent-color) l c h / 1),
                 0 -1px 1px inset oklch(from var(--accent-color-dark) l c h / 1);
   }
 
   .generate-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px oklch(from var(--accent-color) l c h / 0.6),
+    box-shadow: 0 8px 25px oklch(from var(--shadow-color) l c h / 1.5),
                 0 1px 2px inset oklch(from var(--accent-color) l c h / 1),
                 0 -1px 1px inset oklch(from var(--accent-color-dark) l c h / 1);
   }
 
   .generate-btn:active {
     transform: translateY(1px);
-     box-shadow: 0 2px 10px oklch(from var(--accent-color) l c h / 0.4),
+     box-shadow: 0 2px 10px var(--shadow-color),
                 0 1px 2px inset oklch(from var(--accent-color) l c h / 1),
                 0 -1px 1px inset oklch(from var(--accent-color-dark) l c h / 1);
+  }
+
+  /* Theme Switch */
+  .theme-switch-wrapper {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: 0;
+  }
+
+  .theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+  }
+
+  .theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: oklch(80% 0.02 240);
+    transition: .4s;
+    border-radius: 28px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+
+  input:checked + .slider {
+    background-color: var(--accent-color);
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(22px);
   }
 }
 
