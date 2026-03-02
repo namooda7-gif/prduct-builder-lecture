@@ -74,7 +74,7 @@ generateBtn.addEventListener('click', () => {
 });
 
 // --- Theme Switch --- 
-const themeToggle = document.getElementById('theme-toggle');
+const themeToggleButton = document.getElementById('theme-toggle-btn');
 const docElement = document.documentElement; // <html> element
 
 // Function to set the theme
@@ -89,22 +89,22 @@ const savedTheme = localStorage.getItem('theme');
 // Check for system preference
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
 
+// Initial theme setup
 if (savedTheme) {
-    docElement.setAttribute('data-theme', savedTheme);
-    themeToggle.checked = savedTheme === 'dark';
+    setTheme(savedTheme);
 } else if (prefersDark.matches) {
     setTheme('dark');
-    themeToggle.checked = true;
 } else {
     setTheme('light');
 }
 
-// Listener for the toggle
-themeToggle.addEventListener('change', () => {
-    if (themeToggle.checked) {
-        setTheme('dark');
-    } else {
+// Listener for the toggle button
+themeToggleButton.addEventListener('click', () => {
+    const currentTheme = docElement.getAttribute('data-theme');
+    if (currentTheme === 'dark') {
         setTheme('light');
+    } else {
+        setTheme('dark');
     }
 });
 
@@ -114,10 +114,8 @@ prefersDark.addEventListener('change', (e) => {
     if (!localStorage.getItem('theme')) {
         if (e.matches) {
             setTheme('dark');
-            themeToggle.checked = true;
         } else {
             setTheme('light');
-            themeToggle.checked = false;
         }
     }
 });

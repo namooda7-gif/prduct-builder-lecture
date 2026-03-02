@@ -129,56 +129,61 @@
                 0 -1px 1px inset oklch(from var(--accent-color-dark) l c h / 1);
   }
 
-  /* Theme Switch */
-  .theme-switch-wrapper {
-    position: absolute;
-    top: var(--spacing-sm);
-    right: 0;
+  /* Theme Toggle Button */
+  .theme-toggle-btn {
+      position: absolute;
+      top: calc(var(--spacing-md) * -0.5);
+      right: 0;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: var(--spacing-xs);
+      border-radius: 50%;
+      color: var(--text-color);
+      transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  .theme-switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 28px;
+  .theme-toggle-btn:hover {
+      background: oklch(from var(--text-color) l c h / 0.1);
   }
 
-  .theme-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+  .theme-toggle-btn svg {
+      width: 28px;
+      height: 28px;
+      transition: transform 0.5s ease;
   }
 
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: oklch(80% 0.02 240);
-    transition: .4s;
-    border-radius: 28px;
+  /* Hide moon by default */
+  .moon {
+      display: none;
   }
 
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
+  /* Show sun, hide moon in light mode */
+  :root:not([data-theme='dark']) .sun {
+      display: block;
+  }
+   :root:not([data-theme='dark']) .moon {
+      display: none;
   }
 
-  input:checked + .slider {
-    background-color: var(--accent-color);
+  /* Show moon, hide sun in dark mode */
+  [data-theme='dark'] .sun {
+      display: none;
   }
 
-  input:checked + .slider:before {
-    transform: translateX(22px);
+  [data-theme='dark'] .moon {
+      display: block;
+  }
+  
+  /* Animation for icons */
+  [data-theme='dark'] .sun,
+  :root:not([data-theme='dark']) .moon {
+    transform: rotate(360deg) scale(0);
+  }
+
+  [data-theme='dark'] .moon,
+  :root:not([data-theme='dark']) .sun {
+    transform: rotate(0) scale(1);
   }
 }
 
